@@ -3,6 +3,7 @@
 TODO:
 - Setup
     - Simulate keyboard inputs to game
+        - Handle input flipping for side switch
     - Get state data from game
     - Determine rewards
     - Create macros for actions
@@ -10,86 +11,35 @@ TODO:
     - Save model
 '''
 
-import pyautogui as keyboard
+from input_handler import InputHandler
 import time
 import csv
 
-file_name = 'KyMoveList.csv'
 
 def main():
-
     init()
+    ih = InputHandler()
+    move_list = read_csv('KyMoveList.csv')
 
-    button_map = { 
-        '1':('a', 's'),
-        '2':('s',),
-        '3':('s', 'd'),
-        '4':('a',),
-        '5':('',),
-        '6':('d',),
-        '7':('a', 'w'),
-        '8':('w',),
-        '9':('w', 'd'),
-        'p':('u',),
-        'k':('j',),
-        's':('i',),
-        'h':('k',),
-        'd':('o',),
-        }
-
-    move = '214s'
-
-    down_keys = []
-    for input in move:
-        key_inputs = button_map[input]
-        for key in key_inputs:
-            keyboard.keyDown(key)
-            if key not in down_keys:
-                down_keys.append(key)
-
-        # if input not in 'pkshd': # ['p', 'k', 's', 'h', 'd']
-        for down_key in down_keys:
-            print(key_inputs)
-            print(down_keys)
-            if down_key not in key_inputs:
-                keyboard.keyUp(key)
-                down_keys.remove(key)
-
-        # print(f'After key remove: {down_keys}')
-
-    for down_key in down_keys:
-        keyboard.keyUp(down_key)        
-
-    # down_keys = []
-    # for key, key_action in move:
-    #     if key_action == 1:
-    #         keyboard.keyDown(key)
-    #         down_keys.append(key)
-    #     elif key_action == 0:
-    #         keyboard.keyUp(key)
-    #         down_keys.remove(key)
-
-    # for down_key in down_keys:
-    #     keyboard.keyUp(down_key)
+    ih.do_move(move_list[16][0])
+            
 
 def init():
     print('Starting program...')
 
-    time.sleep(3)
+    time.sleep(3) # Give time to focus window on game
 
-    # keyboard.PAUSE = 0.02
+# read csv and return its rows as a list
+def read_csv(file_name):
 
-    
-
-def read_csv():
-    move_data = {}
     with open(file_name, mode='r') as file:
         reader = csv.reader(file)
-        next(reader) # Skip header row
-
-        move_inputs = []
+        parsed_file = []
+        next(reader)
         for row in reader:
-            move_name = row[0]
+            parsed_file.append(row)
+
+        return parsed_file
 
 
 
